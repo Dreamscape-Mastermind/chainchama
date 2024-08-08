@@ -164,6 +164,7 @@ contract ChamaGroup {
         return contributorGroups[contributor];
     }
 
+    // Add a contributor to a group
     function addContributor(uint groupId, address newContributor) public {
         Group storage group = groups[groupId];
         require(group.status == STATUS.ACTIVE, "Group is not active");
@@ -171,9 +172,8 @@ contract ChamaGroup {
         require(group.creator == msg.sender, "Only group creator can add contributors");
 
         // Prevent duplicate contributors
-        for (uint i = 0; i < group.contributors.length; i++) {
-            require(group.contributors[i] != newContributor, "Contributor already exists");
-        }
+        require(findContributorIndex(group.contributors, newContributor) == type(uint).max, "Contributor exists");
+
 
         group.contributors.push(newContributor);
         contributorGroups[newContributor].push(groupId);
@@ -181,22 +181,21 @@ contract ChamaGroup {
         emit ContributorAdded(groupId, newContributor);
     }
 
+    // Remove a contributor from a group
     function removeContributor(uint groupId, address contributor) public {
         Group storage group = groups[groupId];
-        require(group.status == STATUS.ACTIVE, "Group is not active");
-        require(msg.sender == group.creator, "Only group creator can remove contributors");
+        require(group.status == STATUS.ACTIVE, "Group inactive");
+        require(msg.sender == group.creator, "Only creator");
 
         uint index = findContributorIndex(group.contributors, contributor);
         require(index < group.contributors.length, "Contributor not found");
 
-        // Efficiently remove contributor and contribution
-        uint lastIndex = group.contributors.length - 1;
-        group.contributors[index] = group.contributors[lastIndex];
-        delete group.contributors[lastIndex];
+        // Safe array manipulation
+        group.contributors[index] = group.contributors[group.contributors.length - 1];
         group.contributors.pop();
 
-        group.contributionAmounts[index] = group.contributionAmounts[lastIndex];
-        delete group.contributionAmounts[lastIndex];
+        // Assuming contributionAmounts has the same length as contributors
+        group.contributionAmounts[index] = group.contributionAmounts[group.contributionAmounts.length - 1];
         group.contributionAmounts.pop();
 
         // Remove from contributor's groups
@@ -210,6 +209,7 @@ contract ChamaGroup {
         }
     }
 
+    // Helper function to find contributor index
     function findContributorIndex(address[] memory array, address value) private pure returns (uint) {
         for (uint i = 0; i < array.length; i++) {
             if (array[i] == value) {
