@@ -1,84 +1,222 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
-import "./Roles.sol";
-import "./HitchensUnorderedKeySet.sol";
 
 contract ChamaGroup {
-    using Roles for Roles.Role;
-    using HitchensUnorderedKeySetLib for HitchensUnorderedKeySetLib.Set;
+    // Address of the contract owner
+    address private immutable owner;
 
-    struct Member {
-        address memberAddress;
-        string role;
+    // Counter for generating group IDs
+    uint private nextId = 1;
+
+    // Flag to prevent reentrant calls
+    bool private locked;
+
+    // Modifier to prevent reentrant calls
+    modifier nonReentrant() {
+        require(!locked, "Reentrant call");
+        locked = true;
+        _;
+        locked = false;
     }
 
+    // Enum representating the status of the group
+    enum STATUS {
+        ACTIVE,
+        DELETED
+    }
+
+    // Struct to define the structure of the chama groups
     struct Group {
         uint id;
-        string name;
         address creator;
-        Member[] members;
-        mapping(address => string) roles;
-        mapping(address => Roles.Role) memberRoles;
+        string name;
+        string description;
+        STATUS status;
+        uint totalContributions;
+        address[] contributors;
+        uint[] contributionAmounts;
     }
 
-    uint public groupCount = 0;
+    // Mapping to efficiently store groups by ID
     mapping(uint => Group) public groups;
-    mapping(address => HitchensUnorderedKeySetLib.Set) private userGroups;
 
-    event GroupCreated(uint groupId, string groupName, address creator);
-    event MemberAdded(uint groupId, address memberAddress, string role);
+    // Mapping to track which groups a contributor has participated in
+    mapping(address => uint[]) private contributorGroups;
 
-    modifier onlyCreator(uint groupId) {
-        require(groups[groupId].creator == msg.sender, "Only the group creator can perform this action");
+    event GroupCreated(uint indexed groupId, address groupCreator, string name, STATUS status);
+    event GroupDeleted(uint indexed groupId, address groupCreator, STATUS status);
+    event ContributorAdded(uint indexed groupId, address indexed newContributor);
+
+
+    // Contract
+    constructor(){
+        owner = msg.sender;
+    }
+
+    // Modifier to allow only the contract owner to perform certain actions
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can perform this action.");
         _;
     }
 
-    constructor() {
-        // Initial setup can be done here if needed
+
+     // Function to create a new chama group
+    function createGroup(
+        string memory _name, // name of the chama group
+        string memory _description // description of the chama group
+    ) public {
+        // validation checks for input parameters
+        require(bytes(_name).length > 0, 'Name must not be empty');
+        require(bytes(_description).length > 0, 'Description must not be empty');
+
+        // Create a new chama group with the provided information and add it to the array
+        Group memory newGroup = Group({
+            id : nextId,  // assign a unique id to the new chama group
+            creator : msg.sender, // set the creator as the current sender of the transaction
+            name : _name, // set the name of the chama group as the provided name
+            description : _description, // set the description of the chama group as the provided description
+            status : STATUS.ACTIVE, // set the status of the chama group as ACTIVE
+            totalContributions : 0, // set the total contributions to 0 as no contributions have been made yet
+            contributors : new address[](0), // create an empty array to store contributors
+            contributionAmounts : new uint[](0) // create an empty array to store contribution amounts
+        });
+
+        // Create a new array with the creator as the first contributor
+        address[] memory contributorsWithCreator = new address[](1);
+        contributorsWithCreator[0] = msg.sender;
+
+        // Assign the new array to the group's contributors
+        newGroup.contributors = contributorsWithCreator;
+
+        groups[nextId] = newGroup; // add the new chama group to the array
+
+        // Track the group in the contributorGroups mapping
+        contributorGroups[newGroup.creator].push(newGroup.id);
+
+        // emit an event to notify listeners that a new chama group has been created
+        emit GroupCreated(newGroup.id, newGroup.creator, newGroup.name, newGroup.status);
+
+        // increment the id counter to generate unique ids for new chama groups
+        nextId++;
     }
 
-    function createGroup(string memory _name) public {
-        groupCount++;
-        Group storage newGroup = groups[groupCount];
-        newGroup.id = groupCount;
-        newGroup.name = _name;
-        newGroup.creator = msg.sender;
-
-        // Add the creator as the first member with the role "creator"
-        newGroup.members.push(Member(msg.sender, "creator"));
-        newGroup.roles[msg.sender] = "creator";
-        newGroup.memberRoles[msg.sender].add(msg.sender);
-        userGroups[msg.sender].insert(bytes32(groupCount));
-
-        emit GroupCreated(groupCount, _name, msg.sender);
-    }
-
-    function addMember(uint groupId, address _memberAddress, string memory _role) public onlyCreator(groupId) {
+    // Function that allows the group creator to delette the group.
+    function deleteGroup(uint groupId)  public {
+        // Retrieve the group based on the group id
         Group storage group = groups[groupId];
-        group.members.push(Member(_memberAddress, _role));
-        group.roles[_memberAddress] = _role;
-        group.memberRoles[_memberAddress].add(_memberAddress);
-        userGroups[_memberAddress].insert(bytes32(groupId));
 
-        emit MemberAdded(groupId, _memberAddress, _role);
-    }
+        // Validatiion check: only creator can delete
+        require(group.creator == msg.sender, "Only creator can delete");
 
-    function getGroup(uint groupId) public view returns (uint, string memory, address, Member[] memory) {
-        Group storage group = groups[groupId];
-        return (group.id, group.name, group.creator, group.members);
-    }
+        // TODO: Refund the contriibutors when group is delete
 
-    function getUserGroups(address _user) public view returns (uint[] memory) {
-        uint count = userGroups[_user].count();
-        uint[] memory groupIds = new uint[](count);
-        for (uint i = 0; i < count; i++) {
-            groupIds[i] = uint(userGroups[_user].keyAtIndex(i));
+        // Remove the group from each contributor's list
+        for (uint i = 0; i < group.contributors.length; i++) {
+            address contributor = group.contributors[i];
+            uint[] storage contributorGroupsList = contributorGroups[contributor];
+
+            // Find the index of the group in the contributor's list
+            for (uint j = 0; j < contributorGroupsList.length; j++) {
+                if (contributorGroupsList[j] == groupId) {
+                    // Remove the group from the list by shifting elements
+                    for (uint k = j; k < contributorGroupsList.length - 1; k++) {
+                        contributorGroupsList[k] = contributorGroupsList[k + 1];
+                    }
+                    contributorGroupsList.pop();
+                    break;
+                }
+            }
         }
-        return groupIds;
+        // Mark group as delete
+        group.status = STATUS.DELETED;
+
+        // emit an event to notify listeners that the chama group has been deleted
+        emit GroupDeleted(groupId, msg.sender, STATUS.DELETED);
     }
 
-    function isMemberInGroup(uint groupId, address _user) public view returns (bool) {
-        return userGroups[_user].exists(bytes32(groupId));
+    // Function to get a group by its ID
+    function getGroupById(uint groupId) public view returns (
+        uint id,
+        address creator,
+        string memory name,
+        string memory description,
+        STATUS status,
+        uint totalContributions
+    ) {
+        require(groups[groupId].id > 0, "Group does not exist");
+        require(groups[groupId].status == STATUS.ACTIVE, "Group is not active");
+
+        Group storage group = groups[groupId];
+        return (
+            group.id,
+            group.creator,
+            group.name,
+            group.description,
+            group.status,
+            group.totalContributions
+        );
     }
+
+
+    // Function to get all groups that a specific contributor is part of
+    function getGroupsByContributor(address contributor) public view returns (uint[] memory) {
+        return contributorGroups[contributor];
+    }
+
+    function addContributor(uint groupId, address newContributor) public {
+        Group storage group = groups[groupId];
+        require(group.status == STATUS.ACTIVE, "Group is not active");
+        // Validatiion check: only creator can add a contributor
+        require(group.creator == msg.sender, "Only group creator can add contributors");
+
+        // Prevent duplicate contributors
+        for (uint i = 0; i < group.contributors.length; i++) {
+            require(group.contributors[i] != newContributor, "Contributor already exists");
+        }
+
+        group.contributors.push(newContributor);
+        contributorGroups[newContributor].push(groupId);
+
+        emit ContributorAdded(groupId, newContributor);
+    }
+
+    function removeContributor(uint groupId, address contributor) public {
+        Group storage group = groups[groupId];
+        require(group.status == STATUS.ACTIVE, "Group is not active");
+        require(msg.sender == group.creator, "Only group creator can remove contributors");
+
+        uint index = findContributorIndex(group.contributors, contributor);
+        require(index < group.contributors.length, "Contributor not found");
+
+        // Efficiently remove contributor and contribution
+        uint lastIndex = group.contributors.length - 1;
+        group.contributors[index] = group.contributors[lastIndex];
+        delete group.contributors[lastIndex];
+        group.contributors.pop();
+
+        group.contributionAmounts[index] = group.contributionAmounts[lastIndex];
+        delete group.contributionAmounts[lastIndex];
+        group.contributionAmounts.pop();
+
+        // Remove from contributor's groups
+        uint[] storage cGroups = contributorGroups[contributor];
+        for (uint i = 0; i < cGroups.length; i++) {
+            if (cGroups[i] == groupId) {
+                cGroups[i] = cGroups[cGroups.length - 1];
+                cGroups.pop();
+                break;
+            }
+        }
+    }
+
+    function findContributorIndex(address[] memory array, address value) private pure returns (uint) {
+        for (uint i = 0; i < array.length; i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+        return type(uint).max;
+    }
+
 }
