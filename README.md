@@ -42,8 +42,11 @@ To get started with Scaffold-OP, follow the steps below:
 ```
 git clone https://github.com/ethereum-optimism/scaffold-op.git
 cd scaffold-op
+
 yarn install
 ```
+
+#### Duplicate the ```.env.example``` and rename it to ```.env.local```
 
 2. Run a local network in the first terminal:
 
@@ -61,7 +64,19 @@ yarn deploy
 
 This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
 
-4. On the same terminal, start your NextJS app:
+4. In order to quickly bootstrap a local PostgreSQL database we can make use of Docker using variables. This one-liner should be sufficient:
+
+```
+yarn start:database
+```
+
+5. Last but not least we need to actually create our schema in our database. Run the following command:
+
+```
+yarn migrate:dev
+```
+
+6. On the same terminal, start your NextJS app:
 
 ```
 yarn start
