@@ -1,8 +1,8 @@
 {
   "arrowParens": "avoid",
+  "importOrder": ["^react$", "^next/(.*)$", "<THIRD_PARTY_MODULES>", "^@heroicons/(.*)$", "^~~/(.*)$"],
+  "importOrderSortSpecifiers": true,
   "printWidth": 120,
   "tabWidth": 2,
-  "trailingComma": "all",
-  "importOrder": ["^react$", "^next/(.*)$", "<THIRD_PARTY_MODULES>", "^@heroicons/(.*)$", "^~~/(.*)$"],
-  "importOrderSortSpecifiers": true
+  "trailingComma": "all"
 }
