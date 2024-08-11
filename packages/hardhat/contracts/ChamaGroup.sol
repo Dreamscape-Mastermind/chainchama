@@ -9,17 +9,6 @@ contract ChamaGroup {
     // Counter for generating group IDs
     uint private nextId = 1;
 
-    // Flag to prevent reentrant calls
-    bool private locked;
-
-    // Modifier to prevent reentrant calls
-    modifier nonReentrant() {
-        require(!locked, "Reentrant call");
-        locked = true;
-        _;
-        locked = false;
-    }
-
     // Enum representating the status of the group
     enum STATUS {
         ACTIVE,

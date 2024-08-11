@@ -9,6 +9,11 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 
+# .envs
+.env*
+.env
+!.env.example
+
 # eslint
 .eslintcache
 
