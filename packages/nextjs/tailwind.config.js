@@ -4,7 +4,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}", "./utils/**/*.{js,ts,jsx,tsx}"],
   plugins: [require("tailwindcss-animate"), require("daisyui")],
-  darkTheme: "dark",
+  darkTheme: "light",
   theme: {
     extend: {
       fontFamily: {
