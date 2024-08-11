@@ -18,7 +18,7 @@ contract ChamaGroupV5 is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
     using Address for address payable;
 
-    Counters.Counter private nextId;
+    Counters.Counter public nextId;
     uint constant MIN_GRANTEE_MEMBERSHIP_DURATION = 90 days; // Minimum time requirement before becoming a selected grantee
     uint constant MIN_CONTRIBUTION_TIMELINE = 1 hours; // Minimum contribution timeline is 1 hour
 
