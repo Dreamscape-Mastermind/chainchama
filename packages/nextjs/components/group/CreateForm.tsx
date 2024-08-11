@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -25,6 +26,8 @@ const formSchema = Yup.object().shape({
 type FormData = Yup.InferType<typeof formSchema>;
 
 const CreateForm = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -38,8 +41,6 @@ const CreateForm = () => {
     try {
       const session = await getSession();
 
-      console.log(session);
-
       if (session) {
         const response = await fetch("/api/group/create", {
           method: "POST",
@@ -48,7 +49,7 @@ const CreateForm = () => {
           },
           body: JSON.stringify({
             ...data,
-            userId: session?.user?.id, // Attach the logged-in user's ID to the request
+            email: session?.user?.email, // Attach the logged-in user's ID to the request
           }),
         });
 
@@ -58,7 +59,8 @@ const CreateForm = () => {
 
         const result = await response.json();
         console.log("Organization created:", result);
-        // Handle success (e.g., redirect or display a success message)
+        // Redirect to /group/member/create on success
+        router.push("/group/member/create");
       } else {
         console.error("You must be logged in to create an organization");
       }

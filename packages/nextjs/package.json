@@ -75,6 +75,7 @@
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit --incremental",
+    "db:pull": "dotenv -e .env.local npx -- prisma db pull",
     "db:push": "dotenv -e .env.local npx -- prisma db push",
     "db:seed": "dotenv -e .env.local npx -- prisma db seed",
     "dev": "next dev",
