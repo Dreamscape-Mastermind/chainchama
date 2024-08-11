@@ -941,7 +941,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     ChamaGroupV3: {
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
       abi: [
         {
           inputs: [],
@@ -1076,7 +1076,45 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "MemberAddedByOwner",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "member",
+              type: "address",
+            },
+          ],
           name: "MemberApproved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "member",
+              type: "address",
+            },
+          ],
+          name: "MemberRevoked",
           type: "event",
         },
         {
@@ -1126,6 +1164,24 @@ const deployedContracts = {
         {
           stateMutability: "payable",
           type: "fallback",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "newMember",
+              type: "address",
+            },
+          ],
+          name: "addMemberByOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
         },
         {
           inputs: [
@@ -1313,6 +1369,24 @@ const deployedContracts = {
         {
           inputs: [],
           name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "member",
+              type: "address",
+            },
+          ],
+          name: "revokeMemberApproval",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",

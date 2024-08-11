@@ -4,6 +4,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -42,7 +43,7 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
         mapping(address => uint256) votingPower;
         address selectedGrantee;
         address[] allowedTokens;
-        uint totalContributions; 
+        uint totalContributions;
         bool granteeApproved; // Tracks if the grantee is approved to withdraw
         bool hasWithdrawn; // Tracks if the grantee has withdrawn in the current period
     }
@@ -56,6 +57,8 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
     event GranteeSelected(uint indexed groupId, address indexed grantee);
     event GroupDeleted(uint indexed groupId, address groupCreator, STATUS status);
     event Withdrawal(address indexed contributor, uint amount, address tokenAddress);
+    event MemberAddedByOwner(uint indexed groupId, address indexed member);
+    event MemberRevoked(uint indexed groupId, address indexed member);
 
     constructor() {
         nextId.increment(); // Start IDs from 1
@@ -85,7 +88,7 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
      * @dev Creates a new savings group with the specified parameters.
      * @param _name The name of the group.
      * @param _description The description of the group.
-     * @param _contributionAmount The fixed contribution amount for all members.
+     * @param _contributionAmount The fixed contribution amount for all members, denoted in the smallest unit (e.g., wei for Ether, or token decimals for ERC20).
      * @param _contributionTimeline The timeline in seconds for contributions.
      * @param _savingsSplit The percentage out of 10000 for the savings split.
      * @param _allowedTokens An array of allowed ERC20 token addresses for contributions.
@@ -130,17 +133,37 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
      * @param newMember The address of the new member.
      */
     function approveMember(uint groupId, address newMember) public nonReentrant groupExists(groupId) onlyGroupCreator(groupId) {
-        Group storage group = groups[groupId];
-        group.approvedMembers[newMember] = true;
+        _approveMemberInternal(groupId, newMember);
+    }
 
-        emit MemberApproved(groupId, newMember);
+    /**
+     * @dev Allows the contract owner to add a new member to a group.
+     * @param groupId The ID of the group.
+     * @param newMember The address of the new member.
+     */
+    function addMemberByOwner(uint groupId, address newMember) public nonReentrant onlyGroupCreator(groupId) groupExists(groupId) {
+        _approveMemberInternal(groupId, newMember);
+        emit MemberAddedByOwner(groupId, newMember);
+    }
+
+    /**
+     * @dev Allows the contract owner to revoke member's approval status.
+     * @param groupId The ID of the group.
+     * @param member The address of the revoked member.
+     */
+
+    function revokeMemberApproval(uint groupId, address member) public nonReentrant onlyGroupCreator(groupId) groupExists(groupId) {
+        Group storage group = groups[groupId];
+        group.approvedMembers[member] = false;
+
+        emit MemberRevoked(groupId, member);
     }
 
     /**
      * @dev Contributes Ether or ERC20 tokens to the specified group.
      * @param groupId The ID of the group.
-     * @param tokenAddress The address of the ERC20 token (use 0x0 for Ether).
-     * @param tokenAmount The amount of ERC20 tokens to contribute.
+     * @param tokenAddress The address of the ERC20 token (use 0x0000000000000000000000000000000000000000 for Ether).
+     * @param tokenAmount The amount of ERC20 tokens to contribute, in the token's smallest unit.
      */
     function contribute(uint groupId, address tokenAddress, uint tokenAmount) public payable nonReentrant groupExists(groupId) onlyApprovedMember(groupId) {
         Group storage group = groups[groupId];
@@ -164,7 +187,6 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
             IERC20(tokenAddress).safeTransferFrom(msg.sender, address(this), tokenAmount);
             group.tokenContributions[msg.sender][tokenAddress] += valueToSave;
             group.tokenContributions[group.selectedGrantee][tokenAddress] += valueToGrantee;
-
         }
 
         group.totalContributions += group.contributionAmount;
@@ -213,7 +235,7 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
      * @dev Withdraws Ether or ERC20 tokens for the selected grantee.
      * Only the grantee can withdraw, and only once per contribution period.
      * @param groupId The ID of the group.
-     * @param tokenAddress The address of the ERC20 token (use 0x0 for Ether).
+     * @param tokenAddress The address of the ERC20 token (use 0x0000000000000000000000000000000000000000 for Ether).
      */
     function withdraw(uint groupId, address tokenAddress) public nonReentrant groupExists(groupId) onlySelectedGrantee(groupId) {
         Group storage group = groups[groupId];
@@ -236,7 +258,6 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
 
             // Safe transfer with try/catch for non-standard tokens
             IERC20(tokenAddress).safeTransfer(msg.sender, amount);
-
         }
 
         group.hasWithdrawn = true; // Mark the withdrawal as completed for the period
@@ -334,6 +355,18 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
             }
         }
         return false;
+    }
+
+    /**
+     * @dev Internal function to approve a new member to join the specified group.
+     * @param groupId The ID of the group.
+     * @param newMember The address of the new member.
+     */
+    function _approveMemberInternal(uint groupId, address newMember) internal {
+        Group storage group = groups[groupId];
+        group.approvedMembers[newMember] = true;
+
+        emit MemberApproved(groupId, newMember);
     }
 
     /**
