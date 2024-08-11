@@ -4,7 +4,7 @@ import React, { type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthButton from "./AuthButton";
-import { RainbowKitCustomConnectButton } from "./scaffold-eth";
+import { FaucetButton, RainbowKitCustomConnectButton, SuperchainFaucetButton } from "./scaffold-eth";
 
 export type HeaderMenuLink = {
   label: string;
@@ -62,8 +62,8 @@ export const Header = () => {
           <HeaderMenuLinks />
           {/* <AuthButton/> */}
           <RainbowKitCustomConnectButton />
-          {/* <FaucetButton /> */}
-          {/* <SuperchainFaucetButton /> */}
+          <FaucetButton />
+          <SuperchainFaucetButton />
           {/* <DappConsoleButton /> */}
 
           <AuthButton />

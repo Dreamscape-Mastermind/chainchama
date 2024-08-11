@@ -6,6 +6,7 @@
   :root {
     --background: 210 100% 97%;
     --foreground: 339 20% 20%;
+    /* hsl( 308 56%  85%) */
     --primary: 308 56% 85%;
     --primary-foreground: 210 22% 22%;
     --secondary: 196 75% 88%;
