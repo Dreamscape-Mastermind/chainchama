@@ -13,6 +13,7 @@ import { Textarea } from "~~/components/ui/textarea";
 
 // Yup schema for form validation
 const formSchema = Yup.object().shape({
+  id: Yup.string(),
   name: Yup.string().required("Organization name is required"),
   description: Yup.string().required("Description is required"),
   groupType: Yup.string()

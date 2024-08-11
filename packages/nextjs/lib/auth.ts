@@ -29,9 +29,15 @@ export const authOptions: NextAuthOptions = {
           name: profile.name || null,
           email: profile.email || null,
           image: gravatarImage, // Use the generated gravatar image
-        };
+        } as { id: string | number | null; name: string | null; email: string | null; image: string | null };
       },
     },
   ],
+  callbacks: {
+    async session(session: any) {
+      console.log("session", session);
+      return session;
+    },
+  },
   debug: process.env.NODE_ENV === "development",
 };
