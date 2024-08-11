@@ -20,7 +20,7 @@ contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
     }
 
     
-    // TODO update the group struct to better match a stokvel group
+    // TODO update the group struct to better match a group
     // TODO - add a set contribution amount,
     // TODO - add a set contribution timeline [ Date]
     // TODO - add set savings split / ratio
