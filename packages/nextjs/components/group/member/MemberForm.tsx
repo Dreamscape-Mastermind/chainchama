@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import router from "next/dist/shared/lib/router/router";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -23,6 +26,7 @@ type FormValues = {
 };
 
 const MemberForm = ({ organizationId }: { organizationId: string }) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -55,11 +59,14 @@ const MemberForm = ({ organizationId }: { organizationId: string }) => {
         const result = await response.json();
         console.log("Member created:", result);
         reset(); // Reset the form fields after successful submission
+        router.push(`/details?id=${organizationId}`);
       } else {
         console.error("Failed to add member");
+        router.push(`/details?id=${organizationId}`);
       }
     } catch (error) {
       console.error("Error adding member:", error);
+      router.push(`/details?id=${organizationId}`);
     }
   };
 
@@ -92,7 +99,13 @@ const MemberForm = ({ organizationId }: { organizationId: string }) => {
           {errors.name && <p className="error-message">{errors.name.message}</p>}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-between">
+        <Link
+          href={`/details?id=${organizationId}`}
+          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/90 h-10 px-4 py-2"
+        >
+          skip this step
+        </Link>
         <Button type="submit">Add Member</Button>
       </CardFooter>
     </form>

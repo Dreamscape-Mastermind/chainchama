@@ -17,9 +17,7 @@ const formSchema = Yup.object().shape({
   id: Yup.string(),
   name: Yup.string().required("Organization name is required"),
   description: Yup.string().required("Description is required"),
-  groupType: Yup.string()
-    .oneOf(["MERRY_GO_ROUND", "SACCO", "OTHER"], "Invalid group type")
-    .required("Group Type is required"),
+  groupType: Yup.string().required("Group Type is required"),
   role: Yup.string().oneOf(["CHAIRPERSON", "MEMBER"], "Invalid role").required("Role is required"),
 });
 
@@ -60,6 +58,7 @@ const CreateForm = () => {
         const result = await response.json();
         console.log("Organization created:", result);
         // Redirect to /group/member/create on success
+        // contractCreateGroup(result);
         router.push(`/group/member/create?id=${result.organization.id}`);
       } else {
         console.error("You must be logged in to create an organization");
@@ -69,6 +68,24 @@ const CreateForm = () => {
       // Handle error (e.g., display an error message)
     }
   };
+  // const contractCreateGroup = async payload => {
+  //   try {
+  //     await writeContractAsync(
+  //       {
+  //         functionName: "createGroup",
+  //         args: [payload],
+  //         value: parseEther("0.01"),
+  //       },
+  //       {
+  //         onBlockConfirmation: txnReceipt => {
+  //           console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+  //         },
+  //       },
+  //     );
+  //   } catch (e) {
+  //     console.error("Error setting greeting", e);
+  //   }
+  // };
 
   return (
     <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -91,7 +108,7 @@ const CreateForm = () => {
             <SelectValue placeholder="Select group type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="MERRY_GO_ROUND">Merry-Go-Round</SelectItem>
+            <SelectItem value="0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9">Merry-Go-Round</SelectItem>
             <SelectItem value="SACCO">Sacco</SelectItem>
             <SelectItem value="OTHER">Other</SelectItem>
           </SelectContent>
@@ -114,7 +131,8 @@ const CreateForm = () => {
       </div>
 
       <Button size="lg" type="submit">
-        Proceed...
+        {/* {isPending ? <span className="loading loading-spinner loading-sm"></span> : "Continue"} */}
+        continue
       </Button>
     </form>
   );

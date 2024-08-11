@@ -14,11 +14,11 @@ export default function Details() {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-card p-4 rounded-lg shadow">
               <h3 className="text-lg font-semibold">Total Contributions</h3>
-              <p className="text-4xl font-bold">$25,000</p>
+              <p className="text-4xl font-bold">$0.0</p>
             </div>
             <div className="bg-card p-4 rounded-lg shadow">
               <h3 className="text-lg font-semibold">Current Recipient</h3>
-              <p className="text-4xl font-bold">Jane Doe</p>
+              <p className="text-4xl font-bold">Account #1</p>
             </div>
             <div className="bg-card p-4 rounded-lg shadow">
               <h3 className="text-lg font-semibold">Status</h3>
@@ -26,7 +26,7 @@ export default function Details() {
             </div>
             <div className="bg-card p-4 rounded-lg shadow">
               <h3 className="text-lg font-semibold">Contribution per Member</h3>
-              <p className="text-4xl font-bold">$100</p>
+              <p className="text-4xl font-bold">$0</p>
             </div>
           </div>
           <div>
@@ -41,19 +41,10 @@ export default function Details() {
             <h2 className="text-2xl font-bold">Contribution Timeline</h2>
             <div className="bg-card p-4 rounded-lg shadow">
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">January 2023</div>
-                <div className="font-bold">$100</div>
+                <div className="text-muted-foreground">---</div>
+                <div className="font-bold">$0</div>
               </div>
               <Separator className="my-4" />
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">February 2023</div>
-                <div className="font-bold">$100</div>
-              </div>
-              <Separator className="my-4" />
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">March 2023</div>
-                <div className="font-bold">$100</div>
-              </div>
             </div>
           </div>
           <div>
@@ -70,8 +61,7 @@ export default function Details() {
             <div className="bg-card p-4 rounded-lg shadow">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="secondary">USDC</Badge>
-                <Badge variant="secondary">DAI</Badge>
-                <Badge variant="secondary">BUSD</Badge>
+                <Badge variant="secondary">ETH</Badge>
               </div>
             </div>
           </div>
@@ -82,29 +72,29 @@ export default function Details() {
             <div className="grid gap-4 mt-4">
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Reputation</div>
-                <div className="font-bold">25</div>
+                <div className="font-bold">0</div>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Chamas</div>
-                <div className="font-bold">3</div>
+                <div className="font-bold">1</div>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Profile ID</div>
-                <div className="font-bold">ABC123</div>
+                <div className="font-bold">1</div>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Wallet Address</div>
                 <Link href="/" className="font-bold underline" prefetch={false}>
-                  0x123...456
+                  0x4b0...cd76
                 </Link>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Join Date</div>
-                <div className="font-bold">January 2023</div>
+                <div className="font-bold">Aug 2024</div>
               </div>
             </div>
           </div>

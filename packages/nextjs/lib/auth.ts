@@ -38,6 +38,10 @@ export const authOptions: NextAuthOptions = {
       console.log("session", session);
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Always redirect to the home page after sign-in
+      return baseUrl;
+    },
   },
   debug: process.env.NODE_ENV === "development",
 };

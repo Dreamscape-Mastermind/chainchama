@@ -47,7 +47,11 @@
   }
 
   .btn-secondary {
-     color: #000;
-     background-color: var(--primary);
+    color: #000;
+    background-color: var(--primary);
   }
+}
+
+[data-theme] {
+  background: oklch(var(--b2));
 }
