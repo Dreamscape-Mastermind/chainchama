@@ -6,6 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+
+// TODO add membership contract - use Unlock Protocol for the production version? More research needed
+
 contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
     using SafeMath for uint256;
 
@@ -16,6 +19,16 @@ contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
         DELETED
     }
 
+    
+    // TODO update the group struct to better match a group
+    // TODO - add a set contribution amount,
+    // TODO - add a set contribution timeline [ Date]
+    // TODO - add set savings split / ratio
+    // TODO - implement a selected grantee
+    // TODO - implement grantee selection method select the minimum period required
+    // TODO - verify membership before allowing contributions (Attest), currently the implementations is incorrect
+    // TODO - add approve membership
+    // what is a stokvel group? - 
     struct Group {
         uint id;
         address creator;
@@ -74,6 +87,8 @@ contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
         newGroup.status = STATUS.ACTIVE;
         newGroup.contributorCount = 1;
 
+
+        // we use a 
         newGroup.isContributor[msg.sender] = true;
         newGroup.etherContributions[msg.sender] = 0;
         newGroup.contributors.push(msg.sender);
@@ -92,6 +107,8 @@ contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
         group.etherContributions[msg.sender] = group.etherContributions[msg.sender].add(msg.value);
         group.totalEtherContributions = group.totalEtherContributions.add(msg.value);
 
+        // TODO we can only be allowed t contribute after the group members attest and confirm our membership
+        // the below logic is thus flawed
         if (!group.isContributor[msg.sender]) {
             group.isContributor[msg.sender] = true;
             group.contributorCount++;
@@ -117,6 +134,8 @@ contract ChamaGroupOwnable is ReentrancyGuard, Ownable {
             group.contributedTokens.push(tokenAddress);
         }
 
+        // TODO we can only be allowed t contribute after the group members attest and confirm our membership
+        // TODO make a new function to verify membership before allowing contributions, currently the implementations is incorrect
         if (!group.isContributor[msg.sender]) {
             group.isContributor[msg.sender] = true;
             group.contributorCount++;
