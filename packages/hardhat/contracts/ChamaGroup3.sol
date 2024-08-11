@@ -50,6 +50,7 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
 
     mapping(uint => Group) groups;
     mapping(address => uint[]) contributorGroups;
+     uint256 public maxBatchSize = 100;
 
     event GroupCreated(uint indexed groupId, address groupCreator, string name, string description, STATUS status);
     event ContributionMade(uint indexed groupId, address indexed contributor, uint amount, address tokenAddress);
@@ -58,6 +59,7 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
     event GroupDeleted(uint indexed groupId, address groupCreator, STATUS status);
     event Withdrawal(address indexed contributor, uint amount, address tokenAddress);
     event MemberAddedByOwner(uint indexed groupId, address indexed member);
+    event MembersAddedByOwner(uint indexed groupId, uint numberOfMembers);
     event MemberRevoked(uint indexed groupId, address indexed member);
 
     constructor() {
@@ -144,6 +146,22 @@ contract ChamaGroupV3 is ReentrancyGuard, Ownable {
     function addMemberByOwner(uint groupId, address newMember) public nonReentrant onlyGroupCreator(groupId) groupExists(groupId) {
         _approveMemberInternal(groupId, newMember);
         emit MemberAddedByOwner(groupId, newMember);
+    }
+
+    /**
+     * @dev Allows the contract owner to add new members to a group.
+     * @param groupId The ID of the group.
+     * @param newMembers The address of the new member.
+     */
+    function addMembersByOwner(uint groupId, address[] memory newMembers) public nonReentrant onlyGroupCreator(groupId) groupExists(groupId) {
+        require(newMembers.length > 0, "No members provided.");
+        require(newMembers.length <= maxBatchSize, "Batch size exceeds maximum allowed for new members.");
+
+        for (uint i = 0; i < newMembers.length; i++) {
+          groups[groupId].contributors.push(newMembers[i]);
+          groups[groupId].approvedMembers[newMembers[i]] = false; // set to false by default
+          }
+        emit MembersAddedByOwner(groupId, newMembers.length);
     }
 
     /**

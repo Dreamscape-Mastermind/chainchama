@@ -941,7 +941,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     ChamaGroupV3: {
-      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
       abi: [
         {
           inputs: [],
@@ -1122,6 +1122,25 @@ const deployedContracts = {
           inputs: [
             {
               indexed: true,
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "numberOfMembers",
+              type: "uint256",
+            },
+          ],
+          name: "MembersAddedByOwner",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
               internalType: "address",
               name: "previousOwner",
               type: "address",
@@ -1179,6 +1198,24 @@ const deployedContracts = {
             },
           ],
           name: "addMemberByOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "groupId",
+              type: "uint256",
+            },
+            {
+              internalType: "address[]",
+              name: "newMembers",
+              type: "address[]",
+            },
+          ],
+          name: "addMembersByOwner",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -1348,6 +1385,19 @@ const deployedContracts = {
               internalType: "uint256[]",
               name: "",
               type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "maxBatchSize",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
