@@ -1,18 +1,31 @@
+import { Manrope } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Metadata } from "next";
-import Navbar from "~~/components/Navbar";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
+import { cn } from "~~/lib/utils";
 import "~~/styles/globals.css";
+
+const fontHeading = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
+});
+
+const fontBody = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body",
+});
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `http://localhost:${process.env.PORT || 3000}`;
 const imageUrl = `${baseUrl}/thumbnail.jpg`;
 
-const title = "Scaffold-OP App";
-const titleTemplate = "%s | Scaffold-OP";
-const description = "Built with 🏗 Scaffold-OP";
+const title = "ChainChama";
+const titleTemplate = "%s | Community Owned and Built Savings Culture";
+const description = "Built with SuperChain - OP Stack";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -50,12 +63,9 @@ export const metadata: Metadata = {
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
-      <body>
+      <body className={cn("antialiased", fontHeading.variable, fontBody.variable)}>
         <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>
-            <Navbar />
-            {children}
-          </ScaffoldEthAppWithProviders>
+          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
         </ThemeProvider>
       </body>
     </html>

@@ -31,6 +31,7 @@
     "next:build": "yarn workspace @se-2/nextjs build",
     "start:database": "yarn workspace @se-2/nextjs start:postgres",
     "migrate:dev": "yarn workspace @se-2/nextjs migrate:dev",
+    "db:pull": "yarn workspace @se-2/nextjs db:pull",
     "db:push": "yarn workspace @se-2/nextjs db:push",
     "migrate:reset": "yarn workspace @se-2/nextjs migrate:reset",
     "db:seed": "yarn workspace @se-2/nextjs migrate:reset",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
+import { SessionProvider } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiConfig } from "wagmi";
@@ -25,14 +26,16 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   }, [setNativeCurrencyPrice, price]);
 
   return (
-    <>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
-      </div>
-      <Toaster />
-    </>
+    <SessionProvider>
+      <>
+        <div className="flex flex-col min-h-[100dvh] justify-between">
+          <Header />
+          {children}
+          <Footer />
+        </div>
+        <Toaster />
+      </>
+    </SessionProvider>
   );
 };
 

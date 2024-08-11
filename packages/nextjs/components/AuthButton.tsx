@@ -1,44 +1,59 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "~~/lib/auth";
+import { useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
+import { Button } from "~~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~~/components/ui/dropdown-menu";
 
-const AuthButton = async () => {
-  const session = await getServerSession(authOptions);
-  console.log(session);
+const AuthButton = () => {
+  const { data: session } = useSession();
+
   return session ? (
-    <div className="dropdown dropdown-end flex items-center justify-center">
-      <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-        <div className="w-12 rounded-full">
-          <Image
-            alt="Tailwind CSS Navbar component"
-            src={session.user?.image || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
-            width={240}
-            height={240}
-          />
-        </div>
-      </div>
-
-      <div>{session?.user?.name}</div>
-      <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-        <li>
-          <a className="justify-between">
-            Profile
-            <span className="badge">New</span>
-          </a>
-        </li>
-        <li>
-          <a>Settings</a>
-        </li>
-        <li>
-          <Link href="/api/auth/signout">Logout</Link>
-        </li>
-      </ul>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage
+              src={session?.user?.image || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+              alt="Avatar"
+            />
+            <AvatarFallback>{session?.user?.name?.charAt(0)}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>
+          <Link href="/profile" className="flex items-center gap-2" prefetch={false}>
+            <div className="h-4 w-4" />
+            <span>Profile</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/settings" className="flex items-center gap-2" prefetch={false}>
+            <div className="h-4 w-4" />
+            <span>Settings</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link href="/api/auth/signout" className="flex items-center gap-2" prefetch={false}>
+            <div className="h-4 w-4" />
+            <span>Logout</span>
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   ) : (
-    <>
-      <Link href="/api/auth/signin">Login</Link>
-    </>
+    <Link href="/api/auth/signin" passHref className="text-sm font-medium hover:underline underline-offset-4">
+      <span>Join</span>
+    </Link>
   );
 };
 
