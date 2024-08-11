@@ -1,15 +1,63 @@
-<div align="center">
-  <a href="https://optimism.io"><img alt="Optimism" src="https://raw.githubusercontent.com/ethereum-optimism/brand-kit/main/assets/svg/OPTIMISM-R.svg" width=320></a>
-  <br />
-  <br />
-</div>
 
-# 🏗🔴 Scaffold-OP
+
+# 🏗🔴 ChainChama
+
+# ChamaChain
+
+ChamaChain is a web3 service that provides access to short-term loans for small communities based on various cultural approaches to saving, such as merry-go-rounds and SACCOs. We offer these financial services at lower rates and via more accessible tools, leveraging blockchain technology to enhance transparency and security.
+
+## Key Features
+
+### Group Creation and Management
+- **Create a Chama:** Any user can create a new savings group (Chama) by providing essential details like the group's name, description, contribution amount, timeline, and allowed tokens.
+- **Manage Chama Settings:** The creator of the group automatically becomes an approved member and is responsible for managing the group's settings.
+
+### Contributions
+- **Make Contributions:** Members can contribute Ether or ERC20 tokens to the group within specified timelines.
+- **Savings and Grants:** Contributions are split between savings and an amount allocated to a selected grantee, promoting a balanced savings and grant distribution within the group.
+
+### Grantee Selection
+- **Voting Mechanism:** The contract implements a voting mechanism where members with the highest voting power (based on contributions and duration of membership) are selected as grantees.
+- **Fund Withdrawal:** The selected grantee is approved to withdraw their allocated funds for the current period.
+
+### Withdrawal Mechanism
+- **Grantee Withdrawal:** Approved grantees can withdraw their funds (Ether or tokens) allocated to them during the contribution period.
+- **Contributor Withdrawal:** Contributors can withdraw their savings after the group is archived or when the group status allows.
+
+### Group Archiving
+- **Archive Groups:** The group creator can archive a group, marking it as inactive. Archived groups retain their records but do not accept new contributions.
+
+### Security and Fairness
+- **Fair Distribution:** The contract ensures fair distribution of funds using a transparent voting process and time-based membership duration for grantee eligibility.
+- **Security Measures:** ReentrancyGuard and other security measures are integrated to protect against common smart contract vulnerabilities.
+
+### Token Management
+- **Manage Tokens:** The group creator can manage the list of allowed ERC20 tokens, adding or removing tokens as needed to facilitate contributions in various cryptocurrencies.
+
+## Deployed Smart Contracts
+
+ChamaChain's core service is implemented through the **ChamaGroupV5** smart contract, deployed on the Ethereum blockchain (Layer 2 solutions) to manage savings groups, commonly known as Chamas in some African communities or Stokvels in other regions.
+
+- **Contract Name:** ChamaGroupV5
+- **Network:** Ethereum - Optimism Sepolia, Base Sepolia
+- **Contract Address OP Sepolia:** [ChainChamaV1 OP Sepolia](https://sepolia-optimism.etherscan.io/address/0x86a21436887050432159153e00d8ba8674ad6576)
+- **Contract Address Base Sepolia:** [ChainChamaV1 Base Sepolia](https://sepolia.basescan.org/address/0x86A21436887050432159153E00d8bA8674aD6576#events)
+
+## Getting Started
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/ChamaChain.git
+   cd ChamaChain
+
+
 
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Documentation</a> |
   <a href="https://scaffoldeth.io">Website</a>
 </h4>
+
+## Tech Stack
 
 Scaffold-OP is a fork of Scaffold-ETH2 with minimal differences, providing additional dApp examples, native support for Superchain testnets, and more low-level instructions. We highly recommend the Scaffold-ETH2 docs as the primary guideline.
 
