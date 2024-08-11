@@ -45,4 +45,9 @@
   h6 {
     @apply font-heading;
   }
+
+  .btn-secondary {
+     color: #000;
+     background-color: var(--primary);
+  }
 }
