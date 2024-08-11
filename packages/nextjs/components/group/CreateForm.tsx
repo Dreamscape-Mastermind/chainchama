@@ -60,7 +60,7 @@ const CreateForm = () => {
         const result = await response.json();
         console.log("Organization created:", result);
         // Redirect to /group/member/create on success
-        router.push("/group/member/create");
+        router.push(`/group/member/create?id=${result.organization.id}`);
       } else {
         console.error("You must be logged in to create an organization");
       }
@@ -100,7 +100,7 @@ const CreateForm = () => {
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="role">Organization Role</Label>
+        <Label htmlFor="role">Organizer Role</Label>
         <Select onValueChange={value => setValue("role", value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select organization role" />
@@ -114,7 +114,7 @@ const CreateForm = () => {
       </div>
 
       <Button size="lg" type="submit">
-        Proceed to Add Member
+        Proceed...
       </Button>
     </form>
   );

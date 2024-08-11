@@ -78,7 +78,8 @@ model Organization {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users User[] @relation("UserOrganizations")
+  users  User[]   @relation("UserOrganizations")
+  Member Member[]
 
   @@map("organizations")
 }
@@ -86,4 +87,17 @@ model Organization {
 enum Role {
   CHAIRPERSON
   MEMBER
+}
+
+model Member {
+  id             String       @id @default(cuid())
+  name           String
+  wallet         String
+  role           Role
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("members")
 }

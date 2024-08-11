@@ -42,3 +42,31 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     return NextResponse.json({ error: "Error deleting user" }, { status: 500 });
   }
 }
+
+
+// fetch all groups (organizations) linked to a specific user by their userId
+export async function GET(request: Request, { params }: { params: { userId: string } }) {
+  try {
+    const { userId } = params;
+
+    // Fetch all organizations linked to the user
+    const organizations = await prisma.organization.findMany({
+      where: {
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    if (organizations.length === 0) {
+      return NextResponse.json({ success: false, error: "No organizations found for this user" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, organizations });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ success: false, error: "Failed to fetch organizations" }, { status: 500 });
+  }
+}

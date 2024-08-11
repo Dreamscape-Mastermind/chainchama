@@ -1,11 +1,6 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/hUkwilBeRcB
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import Link from "next/link"
-import { Separator } from "~~/components/ui/separator"
-import { Badge } from "~~/components/ui/badge"
+import Link from "next/link";
+import { Badge } from "~~/components/ui/badge";
+import { Separator } from "~~/components/ui/separator";
 
 export default function Details() {
   return (
@@ -102,7 +97,7 @@ export default function Details() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Wallet Address</div>
-                <Link href="#" className="font-bold underline" prefetch={false}>
+                <Link href="/" className="font-bold underline" prefetch={false}>
                   0x123...456
                 </Link>
               </div>
@@ -116,5 +111,5 @@ export default function Details() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -42,7 +42,7 @@ const Home: NextPage = () => {
                   Join the Club
                 </Button>
                 <Link
-                  href="#"
+                  href="/"
                   className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
@@ -202,7 +202,7 @@ const Home: NextPage = () => {
             </form>
             <p className="text-xs text-muted-foreground">
               By applying, you agree to our{" "}
-              <Link href="#" className="underline underline-offset-2" prefetch={false}>
+              <Link href="/" className="underline underline-offset-2" prefetch={false}>
                 Terms &amp; Conditions
               </Link>
             </p>

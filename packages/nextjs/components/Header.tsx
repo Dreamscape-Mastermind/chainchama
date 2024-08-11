@@ -4,6 +4,7 @@ import React, { type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthButton from "./AuthButton";
+import { RainbowKitCustomConnectButton } from "./scaffold-eth";
 
 export type HeaderMenuLink = {
   label: string;
@@ -17,8 +18,8 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Home",
     href: "/",
   },
-  { label: "How it Works", href: "#" },
-  { label: "Features", href: "#" },
+  { label: "How it Works", href: "/" },
+  { label: "Features", href: "/" },
 ];
 
 export const HeaderMenuLinks = () => {
@@ -60,7 +61,7 @@ export const Header = () => {
         <nav className="ml-auto flex items-center justify-center gap-4 sm:gap-6">
           <HeaderMenuLinks />
           {/* <AuthButton/> */}
-          {/* <RainbowKitCustomConnectButton /> */}
+          <RainbowKitCustomConnectButton />
           {/* <FaucetButton /> */}
           {/* <SuperchainFaucetButton /> */}
           {/* <DappConsoleButton /> */}
